@@ -1,36 +1,46 @@
-<table style="width: 500px">
-  <tr>
-    <th style="width: 50px">Name</th>
-    <th style="width: 100px">Price</th>
-    <th style="width: 100px">1D</th>
-    <th style="width: 100px">1W</th>
-    <th style="width: 100px">1M</th>
-    <th style="width: 100px">1Y</th>
-  </tr>
-  <tr>
-    <td>BCOIN</td>
-    <td>
-      <label [ngStyle]="{ float: 'center' }">{{ dataBcoin.ask }} USDT</label>
-    </td>
-    <td>
-      <label [ngStyle]="{ color: dataBcoin.day?.color, float: 'right' }"
-        >{{ dataBcoin.day?.value }}%</label
-      >
-    </td>
-    <td>
-      <label [ngStyle]="{ color: dataBcoin.week?.color, float: 'right' }"
-        >{{ dataBcoin.week?.value }}%</label
-      >
-    </td>
-    <td>
-      <label [ngStyle]="{ color: dataBcoin.month?.color, float: 'right' }"
-        >{{ dataBcoin.month?.value }}%</label
-      >
-    </td>
-    <td>
-      <label [ngStyle]="{ color: dataBcoin.year?.color, float: 'right' }"
-        >{{ dataBcoin.year?.value }}%</label
-      >
-    </td>
-  </tr>
-</table>
+<div class="content">
+  <table style="width: 600px">
+    <tr>
+      <th style="min-width: 50px">Name</th>
+      <th style="width: 250px">Price</th>
+      <th style="width: 100px">1D</th>
+      <th style="width: 100px">1W</th>
+      <th style="width: 100px">1M</th>
+      <th style="width: 100px">1Y</th>
+      <th style="width: 100px">Action</th>
+    </tr>
+    <tr *ngFor="let i of listCoin">
+      <td>{{ i.name }}</td>
+      <td>
+        <label [ngStyle]="{ float: 'right' }">{{ i.ask }} USDT</label>
+      </td>
+      <td>
+        <label [ngStyle]="{ color: i.day?.color, float: 'right' }"
+          >{{ i.day?.value }}%</label
+        >
+      </td>
+      <td>
+        <label [ngStyle]="{ color: i.week?.color, float: 'right' }"
+          >{{ i.week?.value }}%</label
+        >
+      </td>
+      <td>
+        <label [ngStyle]="{ color: i.month?.color, float: 'right' }"
+          >{{ i.month?.value }}%</label
+        >
+      </td>
+      <td>
+        <label [ngStyle]="{ color: i.year?.color, float: 'right' }"
+          >{{ i.year?.value }}%</label
+        >
+      </td>
+      <td>
+        <button (click)="deleteCoin(i.name)">x</button>
+      </td>
+    </tr>
+  </table>
+  <form [formGroup]="formGroup" (ngSubmit)="addLikeCoin()">
+    <input formControlName="name" />
+    <button type="submit">Add</button>
+  </form>
+</div>

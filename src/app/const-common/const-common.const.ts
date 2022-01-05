@@ -4673,6 +4673,7 @@ export interface RootObject {
 }
 
 export interface COIN {
+  name: string;
   bid?: string;
   ask?: string;
   time?: number;

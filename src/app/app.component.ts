@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ConfigService } from './config/config.service';
 import { interval, Observable } from 'rxjs';
 import { COIN, DIFFERENCE } from './const-common/const-common.const';
+import { FormBuilder, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,88 +10,104 @@ import { COIN, DIFFERENCE } from './const-common/const-common.const';
 })
 export class AppComponent implements OnInit {
   title = 'my-app';
-  public dataBcoin: COIN = {};
-  public dataSpg: COIN = {};
+  formGroup: FormGroup;
+  public listCoin: COIN[] = [];
+  public listFilter: string[] = ['BCOINUSDT', 'ONEUSDT'];
   public audio = new Audio();
-  constructor(public configService: ConfigService) {}
+  constructor(public configService: ConfigService, private fb: FormBuilder) {
+    this.formGroup = this.fb.group({
+      name: [null],
+    });
+  }
   ngOnInit(): void {
     this.audio.src = '../assets/mp3/ring.mp3';
     this.audio.load();
     const source = interval(5000);
     source.subscribe((val) => {
-      this.getPriceBcoin();
+      this.getListCoin();
     });
   }
 
-  getPriceBcoin() {
+  getListCoin() {
     this.configService.getPriceCoin().subscribe((data) => {
-      this.dataBcoin = data['BCOINUSDT'];
-      this.dataBcoin = {
-        ...this.dataBcoin,
-        ask: Number(this.dataBcoin.ask).toFixed(2),
-      };
-      if (Number(this.dataBcoin.ask) > 3.0) {
-        this.audio.play();
-      } else {
-        this.audio.pause();
+      let dataCoin = [] as COIN[];
+      for (const iterator of this.listFilter) {
+        let day = {} as DIFFERENCE;
+        let week = {} as DIFFERENCE;
+        let month = {} as DIFFERENCE;
+        let year = {} as DIFFERENCE;
+        if (data.hasOwnProperty(iterator)) {
+          this.configService
+            .getChartOfTime(iterator.replace('USDT', ''), '1D', 'USDT')
+            .subscribe((dataD) => {
+              day = this.mathDifference(dataD.data);
+              this.configService
+                .getChartOfTime(iterator.replace('USDT', ''), '7D', 'USDT')
+                .subscribe((dataW) => {
+                  week = this.mathDifference(dataW.data);
+                  this.configService
+                    .getChartOfTime(iterator.replace('USDT', ''), '1M', 'USDT')
+                    .subscribe((dataM) => {
+                      month = this.mathDifference(dataM.data);
+                      this.configService
+                        .getChartOfTime(
+                          iterator.replace('USDT', ''),
+                          '1Y',
+                          'USDT'
+                        )
+                        .subscribe((dataY) => {
+                          year = this.mathDifference(dataY.data);
+                          dataCoin.push({
+                            ...data[iterator],
+                            name: iterator.replace('USDT', ''),
+                            day,
+                            week,
+                            month,
+                            year,
+                          });
+                        });
+                    });
+                });
+            });
+        }
       }
-      this.getAllChartOfTime('BCOIN');
-      this.dataSpg = data['SPGUSDT'];
+      this.listCoin = dataCoin;
     });
   }
 
-  convertTimestampToTime(timeStamp: string) {
-    var s = new Date(timeStamp).toLocaleDateString('en-US');
+  mathDifference(data: any) {
+    let listKey = Object.keys(data);
+    let length = Object.keys(data).length;
+    let range =
+      Number(data[listKey[0]][0]) / Number(data[listKey[length - 1]][0]);
+    if (range < 1) {
+      return { value: Number((1 - range) * 100).toFixed(2), color: 'green' };
+    } else {
+      return { value: Number((range - 1) * 100).toFixed(2), color: 'red' };
+    }
+  }
+  addLikeCoin() {
+    for (const iterator of this.listFilter) {
+      if (String(iterator) !== String(this.formGroup.value.name)) {
+        this.listFilter.push(this.formGroup.value.name);
+        this.getListCoin();
+      }
+    }
   }
 
-  getAllChartOfTime(nameCoin: string) {
-    this.getChartOfTime(nameCoin, '1D', 'USDT');
-    this.getChartOfTime(nameCoin, '7D', 'USDT');
-    this.getChartOfTime(nameCoin, '1M', 'USDT');
-    this.getChartOfTime(nameCoin, '1Y', 'USDT');
+  deleteCoin(value: string) {
+    for (const iterator of this.listFilter) {
+      if (
+        String(iterator) !== String(this.formGroup.value.name) &&
+        !['BCOINUSDT', 'ONEUSDT'].includes(value)
+      ) {
+        this.listFilter = this.listFilter.filter((item) => item !== value);
+        this.getListCoin();
+      }
+    }
   }
-  getChartOfTime(nameCoin: string, ranges: string, baseCurrency: string) {
-    let obj = { value: '0', color: 'red' } as DIFFERENCE;
-    this.configService
-      .getChartOfTime(nameCoin, ranges, baseCurrency)
-      .subscribe((data) => {
-        let listKey = Object.keys(data.data);
-        let length = Object.keys(data.data).length;
-        let range =
-          Number(data.data[listKey[0]][0]) /
-          Number(data.data[listKey[length - 1]][0]);
-        if (range < 1) {
-          obj = { value: Number((1 - range) * 100).toFixed(2), color: 'green' };
-        } else {
-          obj = { value: Number((range - 1) * 100).toFixed(2), color: 'red' };
-        }
-        switch (ranges) {
-          case '1D':
-            this.dataBcoin = {
-              ...this.dataBcoin,
-              day: obj,
-            };
-            break;
-          case '7D':
-            this.dataBcoin = {
-              ...this.dataBcoin,
-              week: obj,
-            };
-            break;
-          case '1M':
-            this.dataBcoin = {
-              ...this.dataBcoin,
-              month: obj,
-            };
-            break;
-          case '1Y':
-            this.dataBcoin = {
-              ...this.dataBcoin,
-              year: obj,
-            };
-            break;
-          default:
-        }
-      });
-  }
+
+  // convertTimestampToTime(timeStamp: string) {
+  //   var s = new Date(timeStamp).toLocaleDateString('en-US');
+  // }
 }
