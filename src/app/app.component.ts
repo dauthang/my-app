@@ -87,11 +87,10 @@ export class AppComponent implements OnInit {
     }
   }
   addLikeCoin() {
-    for (const iterator of this.listFilter) {
-      if (String(iterator) !== String(this.formGroup.value.name)) {
-        this.listFilter.push(this.formGroup.value.name);
-        this.getListCoin();
-      }
+    if (this.listFilter.find((item) => item !== this.formGroup.value.name)) {
+      this.listFilter.push(this.formGroup.value.name);
+      this.getListCoin();
+      return;
     }
   }
 
@@ -101,7 +100,9 @@ export class AppComponent implements OnInit {
         String(iterator) !== String(this.formGroup.value.name) &&
         !['BCOINUSDT', 'ONEUSDT'].includes(value)
       ) {
-        this.listFilter = this.listFilter.filter((item) => item !== value);
+        this.listFilter = this.listFilter.filter((item) =>
+          String(item !== value)
+        );
         this.getListCoin();
       }
     }
