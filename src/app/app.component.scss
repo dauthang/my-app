@@ -6,11 +6,29 @@ td {
 .content {
   display: flex;
   button {
-    margin-left: 50px;
-    height: 30px;
+    &.add {
+      margin-top: 5px;
+      margin-left: 50px;
+      height: 30px;
+    }
   }
   input {
     margin-left: 50px;
     height: 25px;
+  }
+  select {
+    margin-top: 5px;
+    margin-left: 50px;
+    height: 30px;
+  }
+  td {
+    &.button-delete {
+      display: flex;
+      justify-content: center;
+    }
+  }
+  app-select-search {
+    margin-top: -20px;
+    margin-left: 35px;
   }
 }

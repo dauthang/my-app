@@ -45,4 +45,14 @@ export class ConfigService {
         })
       );
   }
+
+  getNameListCoin(): Observable<any> {
+    return this.http
+      .get<any>(` https://api.invest.vndc.io/api/v1/currency?query=&tag=`)
+      .pipe(
+        map((response) => {
+          return response;
+        })
+      );
+  }
 }
