@@ -5,7 +5,7 @@
       placeholder="Pick one"
       aria-label="Number"
       matInput
-      (input)="changeInput($event)"
+      (ngModelChange)="changeInput($event)"
       [formControl]="myControl"
       [matAutocomplete]="auto"
     />

@@ -9,6 +9,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { SelectSearchModule } from './components/select-search/select-search.module';
+import { NgChartsModule } from 'ng2-charts';
+import { ChartDemoModule } from './components/chart-demo/chart-demo.module';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -21,6 +24,8 @@ import { SelectSearchModule } from './components/select-search/select-search.mod
     MatSliderModule,
     NgxMatSelectSearchModule,
     SelectSearchModule,
+    NgChartsModule,
+    ChartDemoModule
   ],
   providers: [ConfigService],
   bootstrap: [AppComponent],

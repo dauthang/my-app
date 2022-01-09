@@ -35,12 +35,17 @@ export class SelectSearchComponent implements OnInit {
   ngOnInit() {}
 
   changeInput(event: any) {
-    if (event.data) {
+    if (event) {
+      console.log(this.optionDefault.filter((item) =>
+      String(item?.label?.toLowerCase()).includes(
+        String(event.toLowerCase())
+      )));
       this.optionsFilter = this.optionDefault.filter((item) =>
         String(item?.label?.toLowerCase()).includes(
-          String(event.data.toLowerCase())
+          String(event.toLowerCase())
         )
       );
+   
     } else {
       this.optionsFilter = this.optionDefault;
     }

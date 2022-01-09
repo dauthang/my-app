@@ -12,6 +12,7 @@ const listCoinPrivate = ['BNBUSDT', 'BTCUSDT'];
 export class AppComponent implements OnInit {
   title = 'my-app';
   formGroup: FormGroup;
+  public barChartData = [] as {data: [], label: string}[]
   public listCoin: COIN[] = [];
   public listFilter: string[] = [];
   public listCurrency = ['USDT', 'VNDC'];
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit {
   }
 
   getListCoin() {
+    let dataChart = [] as any;
     this.configService.getPriceCoin().subscribe((data) => {
       let dataCoin = [] as COIN[];
       for (const iterator of this.listFilter) {
@@ -57,7 +59,15 @@ export class AppComponent implements OnInit {
               this.formGroup.value.currency
             )
             .subscribe((dataD) => {
+              let dataDayOfChart  = [] as any;
+              Object.keys(dataD.data).forEach((element: any) => {
+                dataDayOfChart.push(Number(dataD.data[element][0]))
+              });
               day = this.mathDifference(dataD.data);
+              dataChart.push({data: dataDayOfChart, label: iterator.replace(
+                this.formGroup.value.currency,
+                ''
+              )});
               this.configService
                 .getChartOfTime(
                   iterator
@@ -105,6 +115,7 @@ export class AppComponent implements OnInit {
             });
         }
       }
+      this.barChartData = dataChart;
       this.listCoin = dataCoin;
     });
   }
@@ -131,7 +142,7 @@ export class AppComponent implements OnInit {
     }
   }
   addLikeCoin() {
-    let value = '';
+    let value = `${this.formGroup.value.name}${this.formGroup.value.currency}`;
     let listAdd = this.listFilter;
     let check = false;
     for (const iterator of this.listFilter) {
@@ -143,6 +154,7 @@ export class AppComponent implements OnInit {
       listAdd.push(value);
     }
     this.listFilter = listAdd;
+    this.getListCoin();
   }
 
   deleteCoin(value: string) {
