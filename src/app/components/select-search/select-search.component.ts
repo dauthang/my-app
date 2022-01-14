@@ -36,16 +36,9 @@ export class SelectSearchComponent implements OnInit {
 
   changeInput(event: any) {
     if (event) {
-      console.log(this.optionDefault.filter((item) =>
-      String(item?.label?.toLowerCase()).includes(
-        String(event.toLowerCase())
-      )));
       this.optionsFilter = this.optionDefault.filter((item) =>
-        String(item?.label?.toLowerCase()).includes(
-          String(event.toLowerCase())
-        )
+        String(item?.label?.toLowerCase()).includes(String(event.toLowerCase()))
       );
-   
     } else {
       this.optionsFilter = this.optionDefault;
     }

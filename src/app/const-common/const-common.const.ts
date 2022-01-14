@@ -4675,12 +4675,17 @@ export interface RootObject {
 export interface COIN {
   name: string;
   bid?: string;
+  quantity?: number;
+  purchasePrice?: number;
+  profitandLoss?: DIFFERENCE;
   ask?: string;
   time?: number;
   day?: DIFFERENCE;
   week?: DIFFERENCE;
   month?: DIFFERENCE;
   year?: DIFFERENCE;
+  background?: string;
+  target?: number;
 }
 
 export interface DIFFERENCE {

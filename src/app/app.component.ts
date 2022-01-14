@@ -1,6 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ConfigService } from './config/config.service';
-import { interval, Observable } from 'rxjs';
 import { COIN, DIFFERENCE } from './const-common/const-common.const';
 import { FormBuilder, FormGroup } from '@angular/forms';
 const listCoinPrivate = ['BNBUSDT', 'BTCUSDT'];
@@ -12,7 +11,7 @@ const listCoinPrivate = ['BNBUSDT', 'BTCUSDT'];
 export class AppComponent implements OnInit {
   title = 'my-app';
   formGroup: FormGroup;
-  public barChartData = [] as {data: [], label: string}[]
+  public barChartData = [] as { data: []; label: string }[];
   public listCoin: COIN[] = [];
   public listFilter: string[] = [];
   public listCurrency = ['USDT', 'VNDC'];
@@ -23,10 +22,14 @@ export class AppComponent implements OnInit {
       name: [null],
       target: [null],
       currency: ['USDT'],
+      quantity: [0],
+      profitAndLoss: [null],
+      purchasePrice: [null],
     });
     this.listFilter = [
       `BCOIN${this.formGroup.value.currency}`,
       `ONE${this.formGroup.value.currency}`,
+      `ITAMCUBE${this.formGroup.value.currency}`,
     ];
   }
   ngOnInit(): void {
@@ -34,10 +37,10 @@ export class AppComponent implements OnInit {
     this.audio.load();
     this.getListCoin();
     this.getListNameCoin();
-    const source = interval(5000);
-    source.subscribe((val) => {
-      this.getListCoin();
-    });
+    // const source = interval(5000);
+    // source.subscribe((val) => {
+    //   this.getListCoin();
+    // });
   }
 
   getListCoin() {
@@ -59,15 +62,15 @@ export class AppComponent implements OnInit {
               this.formGroup.value.currency
             )
             .subscribe((dataD) => {
-              let dataDayOfChart  = [] as any;
+              let dataDayOfChart = [] as any;
               Object.keys(dataD.data).forEach((element: any) => {
-                dataDayOfChart.push(Number(dataD.data[element][0]))
+                dataDayOfChart.push(Number(dataD.data[element][0]));
               });
               day = this.mathDifference(dataD.data);
-              dataChart.push({data: dataDayOfChart, label: iterator.replace(
-                this.formGroup.value.currency,
-                ''
-              )});
+              dataChart.push({
+                data: dataDayOfChart,
+                label: iterator.replace(this.formGroup.value.currency, ''),
+              });
               this.configService
                 .getChartOfTime(
                   iterator
@@ -141,6 +144,17 @@ export class AppComponent implements OnInit {
       return { value: Number((range - 1) * 100).toFixed(2), color: 'red' };
     }
   }
+
+  target(key: string) {
+    this.listCoin = this.listCoin.map((item) => {
+      return {
+        ...item,
+        background:
+          item?.target && Number(item.ask) >= item.target ? '#4caf50' : 'none',
+      };
+    });
+  }
+
   addLikeCoin() {
     let value = `${this.formGroup.value.name}${this.formGroup.value.currency}`;
     let listAdd = this.listFilter;

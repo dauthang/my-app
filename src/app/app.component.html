@@ -8,6 +8,9 @@
         <th style="width: 100px">1W</th>
         <th style="width: 100px">1M</th>
         <th style="width: 100px">1Y</th>
+        <th style="width: 100px">Quantity</th>
+        <th style="width: 100px">Purchase price</th>
+        <th style="width: 100px">Profit and loss</th>
         <th style="width: 100px">Action</th>
       </tr>
       <tr *ngFor="let i of listCoin">
@@ -37,6 +40,17 @@
             >{{ i.year?.value }}%</label
           >
         </td>
+        <td>
+          <label [ngStyle]="{ float: 'right' }">{{ i.quantity }}</label>
+        </td>
+        <td>
+          <label [ngStyle]="{ float: 'right' }">{{ i.purchasePrice }}</label>
+        </td>
+        <td>
+          <label [ngStyle]="{ color: i.profitandLoss?.color, float: 'right' }"
+            >{{ i.profitandLoss?.value }}%</label
+          >
+        </td>
         <td class="button-delete">
           <button (click)="deleteCoin(i.name)">x</button>
         </td>
@@ -55,10 +69,10 @@
     >
       <option *ngFor="let i of listCurrency" [value]="i">{{ i }}</option>
     </select>
+    <input formControlName="quantity" placeholder="target" />
     <button class="add" type="submit">Add</button>
   </div>
   <div class="chart">
-    <app-chart-demo [getbarChartData]="barChartData"></app-chart-demo>
+    <!-- <app-chart-demo [getbarChartData]="barChartData"></app-chart-demo> -->
   </div>
 </form>
-

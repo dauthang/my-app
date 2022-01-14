@@ -14,7 +14,8 @@ td {
   }
   input {
     margin-left: 50px;
-    height: 25px;
+    height: 23px;
+    margin-top: 4px;
   }
   select {
     margin-top: 5px;
@@ -23,8 +24,7 @@ td {
   }
   td {
     &.button-delete {
-      display: flex;
-      justify-content: center;
+      padding: 10px;
     }
   }
   app-select-search {
@@ -34,5 +34,4 @@ td {
 }
 
 .chart {
-  
 }
